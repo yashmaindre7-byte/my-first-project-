@@ -1,0 +1,61 @@
+PREDICTIVE MAINTENANCE OF A CENTRIFUGAL PUMP
+Stage 1 review — revised presenter notes
+
+THE PROJECT IN ONE SENTENCE
+“We are proposing a basic pump condition-monitoring prototype: use vibration and temperature readings, process them in Python with a model developed from a labelled historical dataset, and show a Normal / Warning / Inspect status when the readings indicate an abnormal condition.”
+
+IMPORTANT SCOPE CLARIFICATION
+The target is a simple BE final-year prototype, not an industrial-grade predictive-maintenance system. The first deliverable is early warning / anomaly detection. Exact time-to-failure or remaining useful life is not promised unless appropriate run-to-failure labels and sufficient data are available.
+
+RECOMMENDED BASIC ARCHITECTURE
+1. Historical dataset: use it to learn the Python workflow and train/test an initial model offline.
+2. Hardware: centrifugal pump + vibration sensor + temperature sensor. Use Arduino/ESP32 or the available DAQ only if needed to digitise/read the sensors.
+3. Acquisition: Arduino C/C++ reads sensors and sends readings as serial/CSV to a laptop (or a DAQ sends them directly).
+4. Software: Python on the laptop cleans the readings, calculates the same features used during training, runs the model, and displays Normal / Warning / Inspect.
+
+CRITICAL COMPATIBILITY LIMITATION
+A pretrained model cannot automatically be trusted on a different pump or different sensors. The live readings must use compatible variables, units, sampling/windowing, and preprocessing with the training data. Public data can be used to develop and test the coding pipeline first. For the physical demo, calibrate and validate using the actual lab pump’s readings. If the public dataset does not match the lab setup, use it for practice and build a local healthy baseline / anomaly detector rather than claiming accurate fault prediction.
+
+HOW TO EXPLAIN “PREDICT FAILURE”
+Say: “The prototype will identify abnormal sensor patterns and provide an early warning for inspection. Whether it can predict a specific fault before it happens depends on the quality and labels of the training data.”
+Do not promise exact failure time or remaining useful life. Avoid saying that the pump will be run close to collapse. Propose only faculty-approved, controlled test conditions; do not deliberately damage the pump.
+
+STAGE 1 PROGRESS SLIDE — ONLY KEEP TRUE ITEMS
+Suggested early-stage progress to report, if accurate:
+• Selected the project problem: pump condition monitoring / early warning.
+• Defined a basic prototype scope focused on vibration and temperature.
+• Drafted the sensor → data → Python/model → warning architecture.
+• Started identifying datasets, code examples, sensor options and lab requirements.
+Do not claim that sensors are installed, readings are collected, or a model is trained unless the team has actually done this.
+
+ROADMAP TO APRIL 2027
+Oct–Nov 2026: complete literature/code review; confirm pump availability and lab rules; choose data source, sensors and acquisition setup; run a starter notebook on a public dataset.
+December 2026: set up sensor acquisition and store repeated pump readings in timestamped CSV files; check measurement quality.
+January–February 2027: process the data in Python, compute simple vibration/temperature features, establish a threshold baseline and test a simple model if suitable labels exist.
+March–April 2027: perform safe validation, measure false alarms and missed abnormal cases, integrate a basic warning display, and complete the report and final demo.
+
+SUGGESTED REPOSITORIES / DATASETS
+1. E-Macharia pump predictive-maintenance notebook: https://github.com/E-Macharia/Pump-predictive-maintenance-iot
+   Good for learning the Python notebook, CSV processing and baseline modelling. Its sensor CSV is synthetic; it is not proof of performance on your lab pump.
+
+2. Predictive Maintenance Industrial IoT: https://github.com/somjit101/Predictive-Maintenance-Industrial-IOT
+   Contains code and a public industrial-pump sensor dataset with normal / malfunction status. It has many sensor channels, so do not assume the trained model will work from only two sensors without changing and retraining the model.
+
+3. DrillSense / condition-monitoring-ml: https://github.com/zainali3174/condition-monitoring-ml
+   Useful as an example of Arduino firmware + Python serial logger + feature extraction + ML. It was validated on a drill press, not a centrifugal pump; adapt only the generic data-acquisition structure and simplify it.
+
+4. Centrifugal-pump vibration / current dataset (4TU Research Data): https://data.4tu.nl/datasets/2b61183e-c14f-4131-829b-cc4822c369d0/4
+   Real experimental pump data with labelled fault conditions and vibration/current/voltage. It is a stronger research dataset but involves high-frequency signals and may take more effort to process.
+
+SUGGESTED TEAM SPLIT
+Student 1: pump rig, mechanical considerations, safe test cases, sensor mounting.
+Student 2: sensor/controller setup, acquisition, timestamped CSV logging.
+Student 3: Python, feature extraction, dataset cleaning, model and evaluation.
+Student 4: integration, plots / dashboard, test records, report and presentation.
+All members should understand the data flow and the model’s limitations.
+
+LIKELY REVIEW QUESTION: “How can you predict failure using a pre-existing dataset?”
+Suggested answer: “The labelled historical dataset lets us build and test the initial model. We will then check whether its inputs match the sensors installed on our pump. If the data sources differ, we will use the public dataset for coding practice and calibrate or validate the actual prototype using local measurements. The result is an early-warning prototype, not a guarantee of failure time.”
+
+LIKELY REVIEW QUESTION: “Why use both Arduino and Python?”
+Suggested answer: “Arduino C/C++ is only needed if we choose a microcontroller to read the sensors. Python is easier for data processing, plotting and machine learning on a laptop. If the laboratory already has suitable data-acquisition hardware, we may not need Arduino.”
